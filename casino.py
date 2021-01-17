@@ -15,7 +15,7 @@ class User:
         self.funds -= amount
 
     def check_balance(self):
-        if self.funds > 10:
+        if self.funds > 1:
             return True
         else:
             print("Not enough money... add more!")
@@ -77,7 +77,11 @@ class Coinflip:
     def play_again(self, User):
         again = input("Do you want to play again? ")
         if again[0].lower() == "y":
-            self.user_bet(User)
+            if not User.check_balance():
+                User.deposit_funds(int(input("Add more money here ")))
+                self.user_bet(User)
+            else:
+                self.user_bet(User)
         else:
             print("Returning to Main Menu")
         
