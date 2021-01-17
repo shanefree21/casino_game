@@ -81,6 +81,12 @@ class Coinflip:
         else:
             print("Returning to Main Menu")
         
+class Roulette:
+    pass
+class Blackjack:
+    pass
+class Slots:
+    pass
 
 def main():
     user_dict = {}
