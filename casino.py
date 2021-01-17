@@ -42,7 +42,7 @@ class Coinflip:
             result = self.outcome()
             if result[0].lower() == bet[0].lower():
                 print("It was " + result + "!")
-                print("You won $" + str(wager*2))
+                print("You won $" + str(wager))
             else:
                 print("Sorry, it was " + result)
                 print("You lost $" + str(wager))
