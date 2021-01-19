@@ -47,7 +47,7 @@ class Coinflip:
         return start
     
     def user_bet(self, User):
-        enough_funds = User.check_balance()
+        enough_funds = User.check_balance() #check if the user has enough money to play
         playing = self.begin_game() == 1
         if playing and enough_funds:
             bet = input("Heads or Tails? ")
@@ -58,8 +58,8 @@ class Coinflip:
                     print("Invalid Bet")
                     bet = input("Heads or Tails? ")
             wager = int(input("How much would you like to wager? $"))
-            User.withdraw_funds(wager)
-            result = self.outcome()
+            User.withdraw_funds(wager) #take money out of the users account
+            result = self.outcome() #random of Heads and Tails
             if result[0].lower() == bet[0].lower():
                 print("It was " + result + "!")
                 print("You won $" + str(wager))
@@ -86,7 +86,88 @@ class Coinflip:
             print("Returning to Main Menu")
         
 class Roulette:
-    pass
+    def outcome(self):
+        number = random.randint(1,36)
+        
+        if number % 2 == 0:
+            color = "Black"
+        else:
+            color = "Red"
+        
+        result = [color, number]
+
+        return result
+    
+    def begin_game(self):
+        opening_prompt = input("Do you want to play Roulette? ")
+        start = 0
+        while opening_prompt[0].lower() != "y" or opening_prompt[0].lower() != "n":
+            if opening_prompt[0].lower() == "Y".lower():
+                start = 1
+                break
+            elif opening_prompt[0].lower() == "N".lower():
+                start = 0
+                break
+            else:
+                print("Invalid input")
+                opening_prompt = input("Do you want to play Roulette? ")
+        return start
+
+    def user_bet(self, User):
+        enough_funds = User.check_balance() #check if the user has enough money to play
+        playing = self.begin_game() == 1
+        if playing and enough_funds:
+            result = self.outcome() #random number
+            bets = []
+            color_number = input("Betting Color or Numbers? ")
+
+            if color_number[0].lower() == "n":
+                for i in range(3):
+                    bet_number = int(input("Pick number {} (between 0 and 36 only!): ".format(i+1)))
+                    bets.append(bet_number)
+                wager = int(input("How much would you like to wager? $"))
+                User.withdraw_funds(wager) #take money out of the users account
+
+                if result[1] in bets:
+                    print("It was {} {}!".format(result[0], result[1]))
+                    print("You won $" + str(wager))
+                    User.deposit_funds(wager*2)
+                    print("You now have $" + str(User.funds))
+                    self.play_again(User)
+                else:
+                    print("Sorry, it was {} {}".format(result[0], result[1]))
+                    print("You lost $" + str(wager))
+                    print("You now have $" + str(User.funds))
+                    self.play_again(User)
+            elif color_number[0].lower() == "c":
+                color = input("Red or Black? ")
+                wager = int(input("How much would you like to wager? $"))
+                User.withdraw_funds(wager) #take money out of the users account
+                if result[0][0].lower() == color[0].lower():
+                    print("It was {} {}!".format(result[0], result[1]))
+                    print("You won $" + str(wager))
+                    User.deposit_funds(wager*2)
+                    print("You now have $" + str(User.funds))
+                    self.play_again(User)
+                else:
+                    print("Sorry, it was {} {}".format(result[0], result[1]))
+                    print("You lost $" + str(wager))
+                    print("You now have $" + str(User.funds))
+                    self.play_again(User)
+        elif not playing:
+            print("See ya!")
+    
+    def play_again(self, User):
+        again = input("Do you want to play again? ")
+        if again[0].lower() == "y":
+            if not User.check_balance():
+                User.deposit_funds(int(input("Add more money here ")))
+                self.user_bet(User)
+            else:
+                self.user_bet(User)
+        else:
+            print("Returning to Main Menu")
+
 class Blackjack:
     pass
 class Slots:
@@ -104,6 +185,7 @@ def main():
         u = User(name, age, starting_funds)
         user_dict[name] = [age, starting_funds]
         c = Coinflip()
+        r = Roulette()
     pick_game = input("Which game do you want to play? (type Exit to leave) ")
     while pick_game[0].lower() == "c" or pick_game[0].lower() == "b" or pick_game[0].lower() == "r" or pick_game[0].lower() == "s" or pick_game[0].lower() == "e":
         if pick_game[0].lower() == "c":
@@ -113,7 +195,8 @@ def main():
         elif pick_game[0].lower() == "b":
             pass
         elif pick_game[0].lower() == "r":
-            pass
+            r.user_bet(u)
+            pick_game = input("Which game do you want to play? (type Exit to leave) ")
         elif pick_game[0].lower() == "s":
             pass
         else:
