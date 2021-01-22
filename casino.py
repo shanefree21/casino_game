@@ -169,7 +169,94 @@ class Roulette:
             print("Returning to Main Menu")
 
 class Blackjack:
-    pass
+
+    def begin_game(self):
+        opening_prompt = input("Do you want to play Blackjack? ")
+        start = 0
+        while opening_prompt[0].lower() != "y" or opening_prompt[0].lower() != "n":
+            if opening_prompt[0].lower() == "Y".lower():
+                start = 1
+                break
+            elif opening_prompt[0].lower() == "N".lower():
+                start = 0
+                break
+            else:
+                print("Invalid input")
+                opening_prompt = input("Do you want to play Blackjack? ")
+        return start
+
+    def user_bet(self, User):
+        enough_funds = User.check_balance() #check if the user has enough money to play
+        playing = self.begin_game() == 1
+        if playing and enough_funds:
+            player_hand = []
+            dealer_hand = []
+            wager = int(input("How much would you like to wager? $"))
+            for i in range(0, 2):
+                player_hand.append(random.randint(1,11))
+                dealer_hand.append(random.randint(1,11))
+            
+            print("You have " + str(player_hand[0]) + " " + str(player_hand[1]))
+
+            while sum(player_hand) < 21:
+                if sum(player_hand) > 21:
+                    print("Player Bust")
+                    print("Dealer Wins!")
+                    return None
+                elif sum(player_hand) == 21:
+                    print("Player Blackjack")
+                    break
+                    return None
+
+                hit_stand = input("Hit or Stand ")
+                if hit_stand[0].lower() == "h":
+                    player_hand.append(random.randint(1,11))
+                    print("You got a " + str(player_hand[-1]))
+                    print("You now have " + str(sum(player_hand)))                    
+                else:
+                    break
+            while sum(dealer_hand) < 17:
+                if sum(dealer_hand) > 21:
+                    print("Player won!")
+                    return None
+                elif sum(dealer_hand) == 21:
+                    print("Dealer Blackjack")
+                    return None
+                else:
+                    dealer_hand.append(random.randint(1,11))
+
+            print("Player: {} Dealer: {}".format(sum(player_hand), sum(dealer_hand)))
+            if (sum(player_hand) > sum(dealer_hand) and sum(player_hand) < 22) or (sum(player_hand) <= 21 and sum(dealer_hand) < sum(player_hand)) or sum(dealer_hand) > 22 :
+                print("Player won!")
+                print("You won $" + str(wager))
+                User.deposit_funds(wager*2)
+                print("You now have $" + str(User.funds))
+            elif sum(player_hand) == sum(dealer_hand):
+                print("Push, try again")
+            else:
+                print("Dealer Won!")
+                print("You lost $" + str(wager))
+                User.withdraw_funds(wager)
+                print("You now have $" + str(User.funds))
+
+            self.play_again(User)
+
+        elif not playing:
+            print("See ya!")
+    
+    
+    
+    def play_again(self, User):
+        again = input("Do you want to play again? ")
+        if again[0].lower() == "y":
+            if not User.check_balance():
+                User.deposit_funds(int(input("Add more money here ")))
+                self.user_bet(User)
+            else:
+                self.user_bet(User)
+        else:
+            print("Returning to Main Menu")
+
 class Slots:
     pass
 
@@ -186,6 +273,7 @@ def main():
         user_dict[name] = [age, starting_funds]
         c = Coinflip()
         r = Roulette()
+        b = Blackjack()
     pick_game = input("Which game do you want to play? (type Exit to leave) ")
     while pick_game[0].lower() == "c" or pick_game[0].lower() == "b" or pick_game[0].lower() == "r" or pick_game[0].lower() == "s" or pick_game[0].lower() == "e":
         if pick_game[0].lower() == "c":
@@ -193,7 +281,8 @@ def main():
             c.user_bet(u)
             pick_game = input("Which game do you want to play? (type Exit to leave) ")
         elif pick_game[0].lower() == "b":
-            pass
+            b.user_bet(u)
+            pick_game = input("Which game do you want to play? (type Exit to leave) ")
         elif pick_game[0].lower() == "r":
             r.user_bet(u)
             pick_game = input("Which game do you want to play? (type Exit to leave) ")
