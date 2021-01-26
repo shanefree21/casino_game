@@ -257,9 +257,6 @@ class Blackjack:
         else:
             print("Returning to Main Menu")
 
-class Slots:
-    pass
-
 def main():
     user_dict = {}
     if len(user_dict.keys()) == 0:
@@ -278,16 +275,22 @@ def main():
     while pick_game[0].lower() == "c" or pick_game[0].lower() == "b" or pick_game[0].lower() == "r" or pick_game[0].lower() == "s" or pick_game[0].lower() == "e":
         if pick_game[0].lower() == "c":
             print("Good luck to you!")
+            print()
+            print()
             c.user_bet(u)
             pick_game = input("Which game do you want to play? (type Exit to leave) ")
         elif pick_game[0].lower() == "b":
+            print("Good luck to you!")
+            print()
+            print()
             b.user_bet(u)
             pick_game = input("Which game do you want to play? (type Exit to leave) ")
         elif pick_game[0].lower() == "r":
+            print("Good luck to you!")
+            print()
+            print()
             r.user_bet(u)
             pick_game = input("Which game do you want to play? (type Exit to leave) ")
-        elif pick_game[0].lower() == "s":
-            pass
         else:
             print("See you again soon!")
             break
